@@ -59,7 +59,8 @@ def callback(data):
 
 def line_detection_camera():
     rospy.init_node('line-detection-camera',anonymous=True)
-    rospy.Subscriber("usb_cam/image_raw",Image,callback,queue_size=1,buff_size=2**24)
+    #rospy.Subscriber("usb_cam/image_raw",Image,callback,queue_size=1,buff_size=2**24)
+    rospy.Subscriber("usb_camera/image_raw",Image,callback,queue_size=1,buff_size=2**24)
     try:
         rospy.loginfo("Enetering ROS Spin")
         rospy.spin()
