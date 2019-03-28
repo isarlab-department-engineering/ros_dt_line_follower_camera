@@ -3,7 +3,7 @@ from __future__ import print_function
 import rospy, sys, cv2, time
 import numpy as np
 from geometry_msgs.msg import Twist
-from std_msgs.msg import Int32
+from std_msgs.msg import Float32
 from master_node.msg import *
 from master_node.srv import *
 
@@ -56,7 +56,7 @@ def calculatePID(error,Kp,Ki,Kd):
 
     D = error - last_error
 
-    PID = int(Kp*P + Ki*I + Kd*D)
+    PID = float(Kp*P + Ki*I + Kd*D)
 
     last_error = error
     
@@ -65,38 +65,32 @@ def calculatePID(error,Kp,Ki,Kd):
 def turnOffMotors():
     # DEBUG VERSION TO FIX
     twistMessage.linear.x = 0
-    twistMessage.linear.y = 0
+    twistMessage.angular.z = 0
     followmessage.twist = twistMessage
     pub.publish(followmessage)
     
-def setSpeed(speed1,speed2):
-    if speed1 == 0 and speed2 == 0:
+def setSpeed(x_speed,z_speed):
+    if x_speed == 0 and z_speed == 0:
         turnOffMotors()
     else:
-        twistMessage.linear.x = speed1
-        twistMessage.linear.y = speed2
+        twistMessage.linear.x = x_speed
+        twistMessage.angular.z = z_speed
         followmessage.twist = twistMessage
+        print(x_speed,z_speed)
         pub.publish(followmessage)
 
 def callback(data):
 
     error = data.data
-    speed2 = 100
-    motorBalance = 10
-    speed1 = speed2 + motorBalance
+    x_speed = 0.2
 
-    PID = calculatePID(error,0.5,0.0005,0.005)
+    PID = calculatePID(error,1,0.0,0.0)
 #   rospy.loginfo(error)
 
-    if error == 0:
-        setSpeed(speed1,speed2)
+    setSpeed(x_speed,PID)
 
-    elif (error > 0 and error < 150):
-        setSpeed(speed1+PID,speed2)
-
-    elif (error < 0):
-        setSpeed(speed1,speed2-PID)
-
+'''
+    #Pezzi di Controllo con Vel speciali
     elif error == 152:
         setSpeed(speed1,60)
 #       setSpeed(speed1,70)
@@ -109,6 +103,8 @@ def callback(data):
         if error == 154:
             time.sleep(0.5)
         turnOffMotors()
+'''
+
 
 def lane_controller():
     rospy.init_node('line_controller_angular', anonymous=True)
@@ -117,7 +113,7 @@ def lane_controller():
     rospy.Subscriber("lock_shared",Lock,checkMessage)
 
 
-    rospy.Subscriber('line_detection', Int32, requestLock)
+    rospy.Subscriber('line_detection', Float32, requestLock)
     try:
         rospy.spin()
     except KeyboardInterrupt:
