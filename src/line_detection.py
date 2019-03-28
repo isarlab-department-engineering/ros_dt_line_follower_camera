@@ -42,7 +42,9 @@ def callback(data):
 
     #print(Conv_hsv_Gray.shape)
 
-    ret, mask = cv2.threshold(Conv_hsv_Gray, 0, 255,cv2.THRESH_OTSU) #cv2.THRESH_BINARY_INV | 
+    ret, mask = cv2.threshold(Conv_hsv_Gray, 0, 255,cv2.THRESH_OTSU) #SFONDO NERO E LINEA BIANCA
+
+    #ret, mask = cv2.threshold(Conv_hsv_Gray, 0, 255,cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU) #SFONDO BIANCO E LINEA NERA
 
     im_thresh_gray = cv2.bitwise_and(Conv_hsv_Gray, mask)
 
