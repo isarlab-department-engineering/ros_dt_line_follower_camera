@@ -28,7 +28,7 @@ def callback(data):
 
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
-    cv2.imshow("Orig", img)
+    #cv2.imshow("Orig", img)
 
     # start time
     start_time = cv2.getTickCount()
@@ -64,12 +64,12 @@ def callback(data):
 
     pub.publish(error)
 
-    cv2.imshow("imgOriginal", im_thresh_gray)  # show windows
+    #cv2.imshow("imgOriginal", im_thresh_gray)  # show windows
 
-    cv2.imshow("output", mask_line)  # show windows
+    #cv2.imshow("output", mask_line)  # show windows
 
-    cv2.imshow("Mask", mask)
-    cv2.waitKey(2)
+    #cv2.imshow("Mask", mask)
+    #cv2.waitKey(2)
 
 
 

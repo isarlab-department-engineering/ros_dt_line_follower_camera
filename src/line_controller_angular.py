@@ -91,7 +91,7 @@ def callback(data):
     if(np.abs(PID)<z_thr):
         setSpeed(x_speed,0)
     else:
-        setSpeed(x_speed,PID)
+        setSpeed(x_speed,-PID)
 
 '''
     #Pezzi di Controllo con Vel speciali
