@@ -82,12 +82,16 @@ def setSpeed(x_speed,z_speed):
 def callback(data):
 
     error = data.data
-    x_speed = 0.2
+    x_speed = 0.05
+    z_thr = 0.1
 
-    PID = calculatePID(error,1,0.0,0.0)
+    PID = calculatePID(error,0.8,0.0,0.0)
 #   rospy.loginfo(error)
 
-    setSpeed(x_speed,PID)
+    if(np.abs(PID)<z_thr):
+        setSpeed(x_speed,0)
+    else:
+        setSpeed(x_speed,PID)
 
 '''
     #Pezzi di Controllo con Vel speciali
