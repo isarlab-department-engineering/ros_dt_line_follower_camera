@@ -11,7 +11,7 @@ from cv_bridge import CvBridge, CvBridgeError
 bridge = CvBridge()
 pub = rospy.Publisher('line_detection', Float32, queue_size=1) #ros-line-detection
 
-startY = 50
+startY = 250
 altezza = 10
 
 
@@ -22,15 +22,29 @@ def callback(data):
     # convert image to cv2 standard format
     img = bridge.imgmsg_to_cv2(data)
 
+    #cv2.imshow("B", img[:,:,0])
+    #cv2.imshow("G", img[:,:,1])
+    #cv2.imshow("R", img[:,:,2])
+
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+
+    cv2.imshow("Orig", img)
+
     # start time
     start_time = cv2.getTickCount()
 
     # Gaussian Filter to remove noise
     img = cv2.medianBlur(img,5)
 
-    Conv_hsv_Gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    #print(img.shape)
 
-    ret, mask = cv2.threshold(Conv_hsv_Gray, 0, 255,cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)
+    Conv_hsv_Gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+
+    #print(Conv_hsv_Gray.shape)
+
+    ret, mask = cv2.threshold(Conv_hsv_Gray, 0, 255,cv2.THRESH_OTSU) #cv2.THRESH_BINARY_INV | 
+
+    im_thresh_gray = cv2.bitwise_and(Conv_hsv_Gray, mask)
 
     mask_line = mask[:][startY:startY+altezza]
 
@@ -48,11 +62,11 @@ def callback(data):
 
     pub.publish(error)
 
-    cv2.imshow("imgOriginal", Conv_hsv_Gray)  # show windows
+    cv2.imshow("imgOriginal", im_thresh_gray)  # show windows
 
     cv2.imshow("output", mask_line)  # show windows
 
-    cv2.imshow("Test", mask)
+    cv2.imshow("Mask", mask)
     cv2.waitKey(2)
 
 
